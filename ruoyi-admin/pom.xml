@@ -17,7 +17,7 @@
     </description>
     <properties>
         <!-- 格式：yyyyMMddHHmmss -->
-        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
     </properties>
     <dependencies>
 
@@ -97,15 +97,15 @@
                 <version>3.4.2</version>
                 <configuration>
                     <from>
-                        <!-- Oracle JDK 17 基础镜像 -->
-                        <image>container-registry.oracle.com/java/jdk:17</image>
+                        <!-- 替换为 OpenJDK 17 基础镜像（无需认证，直接拉取） -->
+                        <image>openjdk:17-jdk-slim</image>
                     </from>
                     <to>
                         <!-- 镜像名 + 时间戳 + testing 后缀 -->
-                        <image>ruoyi-admin:${maven.build.timestamp}-testing</image>
+                        <image>nexus.hooshine.com:8088/ruoyi-admin:${maven.build.timestamp}-testing</image>
                     </to>
                     <container>
-                        <mainClass>org.springframework.boot.loader.JarLauncher</mainClass>
+                        <mainClass>org.ruoyi.RuoYiAIApplication</mainClass>
                         <ports>
                             <port>8080</port>
                         </ports>

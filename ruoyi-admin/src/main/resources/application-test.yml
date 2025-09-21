@@ -44,9 +44,9 @@ spring.data:
     # 地址
     host: ${REDIS_HOST}
     # 端口，默认为6379
-    port: 6380
+    port: ${REDIS_PORT}
     # 数据库索引
-    database: 2
+    database: ${REDIS_DATEBASE}
     # 密码(如没有密码请注释掉)
     password: ${REDIS_PASSWORD}
     # 连接超时时间
