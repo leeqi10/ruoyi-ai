@@ -86,6 +86,13 @@
                 <logging.level>warn</logging.level>
             </properties>
         </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <profiles.active>test</profiles.active>
+                <logging.level>warn</logging.level>
+            </properties>
+        </profile>
     </profiles>
 
     <!-- 依赖声明 -->

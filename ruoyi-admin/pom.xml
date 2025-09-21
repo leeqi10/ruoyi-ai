@@ -15,7 +15,10 @@
     <description>
         web服务入口
     </description>
-
+    <properties>
+        <!-- 格式：yyyyMMddHHmmss -->
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+    </properties>
     <dependencies>
 
         <!-- Mysql驱动包 -->
@@ -88,6 +91,28 @@
                     <warName>${project.artifactId}</warName>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <from>
+                        <!-- Oracle JDK 17 基础镜像 -->
+                        <image>container-registry.oracle.com/java/jdk:17</image>
+                    </from>
+                    <to>
+                        <!-- 镜像名 + 时间戳 + testing 后缀 -->
+                        <image>ruoyi-admin:${maven.build.timestamp}-testing</image>
+                    </to>
+                    <container>
+                        <mainClass>org.springframework.boot.loader.JarLauncher</mainClass>
+                        <ports>
+                            <port>8080</port>
+                        </ports>
+                    </container>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
