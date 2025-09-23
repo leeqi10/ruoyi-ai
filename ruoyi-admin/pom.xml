@@ -16,9 +16,12 @@
         web服务入口
     </description>
     <properties>
-        <!-- 格式：yyyyMMddHHmmss -->
+        <!-- 格式化构建时间 -->
         <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+        <!-- 设置时区，比如东八区 -->
+        <user.timezone>Asia/Shanghai</user.timezone>
     </properties>
+
     <dependencies>
 
         <!-- Mysql驱动包 -->
