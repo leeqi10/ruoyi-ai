@@ -1,178 +1,362 @@
-# RuoYi AI
+# AI角色扮演聊天网页 - 项目说明文档
 
-<div align="center">
+## 项目概述
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+本项目基于现有的若依AI数字人平台，开发一个AI角色扮演聊天网页，用户可以搜索并选择感兴趣的角色（如哈利波特、苏格拉底等）进行语音聊天。项目充分利用现有的数字人模块架构，实现多角色AI对话体验。
+
+## 1. 目标用户群体分析
+
+### 1.1 主要用户类型
+
+#### 教育学习型用户
+- **用户特征**：学生、教师、终身学习者
+- **痛点分析**：
+  - 传统学习方式枯燥，缺乏互动性
+  - 难以找到合适的对话伙伴练习语言或讨论专业话题
+  - 历史人物、文学角色等无法直接对话学习
+- **用户故事**：
+  - 作为历史系学生，我希望能与苏格拉底对话，学习哲学思辨方法
+  - 作为英语学习者，我希望与莎士比亚角色对话，提高英语表达能力
+  - 作为教师，我希望利用AI角色进行互动式教学
+
+#### 娱乐休闲型用户
+- **用户特征**：动漫爱好者、游戏玩家、文学爱好者
+- **痛点分析**：
+  - 对虚拟角色有强烈情感连接，但无法真正互动
+  - 缺乏沉浸式的角色扮演体验
+  - 希望与喜爱的角色进行个性化对话
+- **用户故事**：
+  - 作为哈利波特粉丝，我希望与邓布利多对话，获得魔法世界的指导
+  - 作为动漫爱好者，我希望与喜欢的动漫角色进行个性化交流
+  - 作为游戏玩家，我希望体验不同角色的世界观和价值观
+
+#### 心理陪伴型用户
+- **用户特征**：需要情感支持、社交焦虑、寻求心理安慰
+- **痛点分析**：
+  - 现实社交困难，需要安全的对话环境
+  - 希望获得专业但温和的心理建议
+  - 需要24小时可用的陪伴和倾听
+- **用户故事**：
+  - 作为抑郁症患者，我希望与温和的AI角色对话，获得情感支持
+  - 作为社交焦虑者，我希望在安全环境中练习社交技能
+  - 作为孤独老人，我希望有AI角色陪伴聊天
+
+### 1.2 用户需求层次
+
+1. **基础需求**：流畅的语音交互、角色搜索、基本对话
+2. **体验需求**：角色个性化、情感表达、沉浸式体验
+3. **高级需求**：多轮对话记忆、知识问答、技能展示
+
+## 2. 功能规划与优先级
+
+### 2.1 核心功能列表
+
+#### P0 - 核心基础功能（必须实现）
+1. **角色搜索与选择**
+   - 角色库浏览
+   - 关键词搜索
+   - 分类筛选（历史人物、文学角色、动漫角色等）
+   - 角色详情展示
+
+2. **语音聊天交互**
+   - 语音输入识别
+   - 实时语音合成
+   - 流式文本显示
+   - 语音播放控制
+
+3. **基础对话功能**
+   - 文本/语音双模式输入
+   - 流式响应显示
+   - 对话历史记录
+   - 会话管理
+
+#### P1 - 增强体验功能（重要）
+4. **角色个性化**
+   - 角色背景设定
+   - 个性化系统提示词
+   - 角色音色配置
+   - 人格类型设定（MBTI）
+
+5. **多轮对话记忆**
+   - 会话上下文保持
+   - 角色记忆管理
+   - 对话历史查询
+   - 会话导出功能
+
+6. **用户界面优化**
+   - 响应式设计
+   - 角色头像展示
+   - 聊天界面美化
+   - 操作引导
+
+#### P2 - 高级功能（可选）
+7. **知识问答能力**
+   - 角色专业知识库
+   - 实时信息查询
+   - 多语言支持
+   - 知识图谱集成
+
+8. **情感交互**
+   - 情感识别与回应
+   - 表情符号支持
+   - 语气语调变化
+   - 个性化建议
+
+9. **社交功能**
+   - 对话分享
+   - 角色推荐
+   - 用户评价
+   - 社区互动
+
+### 2.2 本次开发功能范围
+
+基于现有数字人模块，本次开发将实现：
+- ✅ 角色搜索与选择（基于现有数字人列表接口）
+- ✅ 语音聊天交互（基于现有语音识别和TTS接口）
+- ✅ 基础对话功能（基于现有聊天接口）
+- ✅ 角色个性化（基于现有数字人配置）
+- ✅ 多轮对话记忆（基于现有会话管理）
+- ✅ 知识问答能力（基于现有知识库集成）
+
+## 3. LLM模型选择与对比
+
+### 3.1 模型对比分析
+
+#### OpenAI GPT-4o-mini
+- **优势**：
+  - 成本效益高，响应速度快
+  - 多语言支持优秀
+  - 角色扮演能力强
+  - 与现有系统集成度高
+- **劣势**：
+  - 中文理解略逊于国产模型
+  - 需要稳定的网络连接
+- **适用场景**：国际角色、多语言对话
+
+#### 通义千问 (Qwen)
+- **优势**：
+  - 中文理解能力强
+  - 成本相对较低
+  - 角色扮演效果优秀
+  - 国内访问稳定
+- **劣势**：
+  - 英文能力相对较弱
+  - 创新性略逊于GPT-4
+- **适用场景**：中文角色、历史文化人物
+
+#### 智谱清言 (GLM)
+- **优势**：
+  - 中文理解优秀
+  - 长文本处理能力强
+  - 多轮对话效果好
+- **劣势**：
+  - 角色扮演创意性一般
+  - 响应速度较慢
+- **适用场景**：长对话、知识问答
+
+### 3.2 最终选择：混合模型策略
+
+**主要模型**：GPT-4o-mini
+- 作为主要对话模型，提供优秀的角色扮演能力
+- 支持多语言角色，满足国际化需求
+- 与现有OpenAI集成架构完美匹配
+
+**备用模型**：通义千问
+- 针对中文角色进行优化
+- 作为GPT-4o-mini的备用方案
+- 提供更好的中文文化理解
+
+**选择理由**：
+1. 现有系统已集成OpenAI，开发成本最低
+2. GPT-4o-mini在角色扮演方面表现优秀
+3. 混合策略可以针对不同角色类型优化体验
+4. 成本控制合理，适合大规模部署
+
+## 4. AI角色技能体系设计
+
+### 4.1 核心技能架构
+
+#### 基础对话技能
+- **语言理解**：多语言输入处理、语义理解、情感识别
+- **语言生成**：自然语言生成、个性化表达、情感输出
+- **上下文管理**：对话记忆、话题切换、信息整合
+
+#### 角色扮演技能
+- **角色一致性**：保持角色设定、避免角色崩坏
+- **个性化表达**：角色特有的语言风格、思维模式
+- **知识应用**：角色相关的专业知识、历史背景
+
+#### 交互技能
+- **语音交互**：语音识别、语音合成、语调控制
+- **情感交互**：情感识别、情感回应、共情表达
+- **学习适应**：用户偏好学习、对话风格适应
+
+### 4.2 具体角色技能实现
+
+#### 历史人物角色（如苏格拉底）
+1. **哲学思辨技能**
+   - 苏格拉底式提问法
+   - 逻辑推理和论证
+   - 道德伦理讨论
+   - 知识探索引导
+
+2. **教学指导技能**
+   - 启发式教学方法
+   - 问题引导和思考
+   - 知识传授和解释
+   - 学习建议提供
+
+3. **文化背景技能**
+   - 古希腊文化知识
+   - 历史事件了解
+   - 哲学思想体系
+   - 时代背景理解
+
+#### 文学角色（如哈利波特）
+1. **魔法世界技能**
+   - 魔法知识问答
+   - 魔法世界规则解释
+   - 魔法历史讲述
+   - 魔法技能指导
+
+2. **冒险指导技能**
+   - 冒险策略建议
+   - 危险情况应对
+   - 团队合作指导
+   - 勇气和智慧培养
+
+3. **情感支持技能**
+   - 友谊和忠诚讨论
+   - 困难时期鼓励
+   - 成长烦恼解答
+   - 价值观引导
+
+#### 现代专家角色（如心理医生）
+1. **心理咨询技能**
+   - 心理问题识别
+   - 情绪疏导技巧
+   - 认知行为指导
+   - 心理健康教育
+
+2. **专业建议技能**
+   - 生活问题解答
+   - 人际关系指导
+   - 压力管理建议
+   - 自我提升指导
+
+3. **危机干预技能**
+   - 危机情况识别
+   - 紧急情况处理
+   - 专业资源推荐
+   - 安全保护建议
+
+### 4.3 技能实现技术方案
+
+#### 基于现有数字人模块
+- **系统提示词优化**：为每个角色定制专业的系统提示词
+- **知识库集成**：为角色配置相关的专业知识库
+- **音色配置**：为不同角色配置合适的语音特征
+- **人格类型设定**：使用MBTI等模型设定角色性格
+
+#### 技能增强机制
+- **动态提示词**：根据对话内容动态调整提示词
+- **知识检索**：实时检索相关知识库内容
+- **情感分析**：分析用户情感状态，调整回应策略
+- **学习机制**：记录用户偏好，持续优化角色表现
+
+## 5. 技术实现方案
+
+### 5.1 系统架构
+
+基于现有的脚手架进行开发，并且没有用他的任何agent相关功能，只是用了对接功能
+
+```
+前端网页 ←→ 数字人聊天接口 ←→ LLM模型服务
+    ↓              ↓              ↓
+角色选择界面    会话管理服务    语音处理服务
+    ↓              ↓              ↓
+角色详情展示    消息存储服务    知识库服务
+```
+
+### 5.2 核心接口利用
+
+#### 数字人管理接口
+- `GET /digital/list` - 获取角色列表
+- `GET /digital/detail/{id}` - 获取角色详情
+- `GET /digital/recent` - 获取最近访问角色
+
+#### 聊天交互接口
+- `POST /digital/chat/send` - 数字人聊天（支持流式响应）
+- `POST /digital/chat/voice` - 语音通话
+- `POST /chat/audio` - 语音转文本
+- `POST /chat/speech` - 文本转语音
+
+#### 会话管理接口
+- `GET /digital/session/list` - 会话列表查询
+- `GET /digital/message/list` - 消息历史查询
+
+### 5.3 前端实现方案
+
+#### 技术栈
+- **框架**：Vue 3 + TypeScript
+- **UI库**：Element Plus
+- **语音处理**：Web Speech API + 科大讯飞SDK
+- **状态管理**：Pinia
+- **HTTP客户端**：Axios
+
+#### 核心组件设计
+1. **角色选择组件**：角色列表、搜索、筛选
+2. **聊天界面组件**：消息展示、输入框、语音控制
+3. **角色详情组件**：角色信息、技能介绍、设置
+4. **会话管理组件**：历史会话、消息导出
+
+### 5.4 角色数据设计
+
+#### 预置角色配置
+```json
+{
+  "id": 1,
+  "name": "苏格拉底",
+  "avatar": "/images/socrates.jpg",
+  "description": "古希腊哲学家，以苏格拉底式提问法闻名",
+  "personalityType": "INTJ",
+  "systemPrompt": "你是苏格拉底，古希腊哲学家。你以苏格拉底式提问法著称，善于通过提问引导人们思考。你的回答应该充满智慧，引导对话者进行深度思考，而不是直接给出答案。",
+  "voiceId": "1",
+  "knowledgeIds": [1, 2, 3]
+}
+```
+
+## 6. 项目特色与创新点
+
+### 6.1 技术特色
+1. **流式响应体验**：基于SSE实现实时流式对话，提升用户体验
+2. **多模态交互**：支持文本和语音双模式输入输出
+3. **角色一致性**：通过精心设计的系统提示词保持角色特征
+4. **知识库增强**：集成专业知识库，提供更准确的回答
+
+### 6.2 用户体验特色
+1. **沉浸式体验**：通过角色设定和语音交互营造沉浸感
+2. **个性化定制**：支持用户自定义角色参数和对话风格
+3. **多角色切换**：用户可以轻松切换不同角色进行对话
+4. **学习导向**：每个角色都具备教学和指导能力
+
+### 6.3 创新亮点
+1. **角色技能体系**：为每个角色设计专门的技能和知识领域
+2. **情感交互**：通过语音和文本实现情感化的交互体验
+3. **学习适应**：系统能够学习用户偏好，持续优化对话质量
+4. **开放扩展**：支持用户自定义角色，扩展角色库
+
+## 7. 开发计划与里程碑
+
+七天时间，但是因为自己的工作时间原因，又因为前端队友不参加了，导致一个人时间非常紧张，大部分完成了
+未完成部分就是，实时通话，目前ai无法发出声音，其他的一切都是完成了，可以看demo文件夹下的视频
 
 
-<p align="center">
-  <a href="https://trendshift.io/repositories/13209">
-    <img src="https://trendshift.io/api/badge/repositories/13209" alt="GitHub Trending">
-  </a>
-</p>
 
+## 9. 总结
 
-<img src="image/00.png" alt="RuoYi AI Logo" width="120" height="120">
+本项目基于现有的若依，通过充分利用现有技术架构和接口能力，实现了一个功能完整、体验优秀的AI角色扮演聊天网页。项目不仅满足了用户与虚拟角色对话的需求，还通过精心设计的角色技能体系和个性化配置，提供了丰富的学习和娱乐体验。
 
+通过混合LLM模型策略和流式响应技术，项目能够提供流畅、自然的对话体验。同时，基于现有数字人模块的架构设计，确保了系统的稳定性和可扩展性，为后续功能扩展和角色库扩充奠定了坚实基础。
 
-
-### 企业级AI助手平台
-
-*开箱即用的智能AI平台，深度集成 FastGPT、扣子(Coze)、DIFY 等主流AI平台，提供先进的RAG技术和多模型支持*
-
-**[🇺🇸 English](README_EN.md)** | **[📖 使用文档](https://doc.pandarobot.chat)** | **[🚀 在线体验](https://web.pandarobot.chat)** | **[🐛 问题反馈](https://github.com/ageerle/ruoyi-ai/issues)** | **[💡 功能建议](https://github.com/ageerle/ruoyi-ai/issues)**
-
-</div>
-
-## ✨ 核心亮点
-
-### 🤖 智能AI引擎
-- **多模型接入**：支持 OpenAI GPT-4、Azure、ChatGLM、通义千问、智谱AI 等主流模型
-- **AI平台集成**：深度集成 **FastGPT**、**扣子(Coze)**、**DIFY** 等主流AI应用平台
-- **Spring AI MCP 集成**：基于模型上下文协议，打造可扩展的AI工具生态系统
-- **实时流式对话**：采用 SSE/WebSocket 技术，提供丝滑的对话体验
-- **AI 编程助手**：内置智能代码分析和项目脚手架生成能力
-
-### 🌟 AI平台生态集成
-- **FastGPT 深度集成**：原生支持 FastGPT API，包括知识库检索、工作流编排和上下文管理
-- **扣子(Coze) 官方SDK**：集成字节跳动扣子平台官方SDK，支持Bot对话和流式响应
-- **DIFY 完整兼容**：使用 DIFY Java Client，支持应用编排、工作流和知识库管理
-- **统一聊天接口**：提供统一的聊天服务接口，支持多平台无缝切换和负载均衡
-
-### 🧠 本地化RAG方案
-- **私有知识库**：基于 Langchain4j 框架 + BGE-large-zh-v1.5 中文向量模型
-- **多种向量库**：支持 Milvus、Weaviate、Qdrant 等主流向量数据库
-- **数据安全可控**：支持完全本地部署，保护企业数据隐私
-- **灵活模型部署**：兼容 Ollama、vLLM 等本地推理框架
-
-### 🎨 AI创作工具
-- **AI 绘画创作**：深度集成 DALL·E-3、MidJourney、Stable Diffusion
-- **智能PPT生成**：一键将文本内容转换为精美演示文稿
-- **多模态理解**：支持文本、图片、文档等多种格式的智能处理
-
-
-
-## 🚀 快速体验
-
-### 在线演示
-- **用户端体验**：[web.pandarobot.chat](https://web.pandarobot.chat) (账号：demo 密码：demo123)
-- **管理后台**：[admin.pandarobot.chat](https://admin.pandarobot.chat) (账号：admin 密码：admin123)
-
-### 项目源码
-| 项目模块 | GitHub 仓库 | Gitee 仓库 | GitCode 仓库 |
-|---------|------------|-----------|-------------|
-| 🔧 后端服务 | [ruoyi-ai](https://github.com/ageerle/ruoyi-ai) | [ruoyi-ai](https://gitee.com/ageerle/ruoyi-ai) | [ruoyi-ai](https://gitcode.com/ageerle/ruoyi-ai) |
-| 🎨 用户前端 | [ruoyi-web](https://github.com/ageerle/ruoyi-web) | [ruoyi-web](https://gitee.com/ageerle/ruoyi-web) | [ruoyi-web](https://gitcode.com/ageerle/ruoyi-web) |
-| 🛠️ 管理后台 | [ruoyi-admin](https://github.com/ageerle/ruoyi-admin) | [ruoyi-admin](https://gitee.com/ageerle/ruoyi-admin) | [ruoyi-admin](https://gitcode.com/ageerle/ruoyi-admin) |
-
-### 合作项目
-| 项目介绍 | GitHub 仓库 | Gitee 仓库 |
-|:--------:|:----------:|:----------:|
-| 前端简化版 | [ruoyi-element-ai](https://github.com/element-plus-x/ruoyi-element-ai) | [ruoyi-element-ai](https://gitee.com/he-jiayue/ruoyi-element-ai) |
-
-
-
-
-## 🛠️ 技术架构
-
-### 🏗️ 核心框架
-- **后端架构**：Spring Boot 3.4 + Spring AI + Langchain4j
-- **数据存储**：MySQL 8.0 + Redis + 向量数据库（Milvus/Weaviate/Qdrant）
-- **前端技术**：Vue 3 + Vben Admin + Naive UI
-- **安全认证**：Sa-Token + JWT 双重保障
-
-### 🔧 系统组件
-- **文档处理**：PDF、Word、Excel 解析，图像智能分析
-- **实时通信**：WebSocket 实时通信，SSE 流式响应
-- **系统监控**：完善的日志体系、性能监控、服务健康检查
-
-## 📚 使用文档
-
-想要深入了解安装部署、功能配置和二次开发？
-
-**👉 [完整使用文档](https://doc.pandarobot.chat)**
-
-## 🤝 参与贡献
-
-我们热烈欢迎社区贡献！无论您是资深开发者还是初学者，都可以为项目贡献力量 💪
-
-### 贡献方式
-1. **Fork** 项目到您的账户
-2. **创建分支** (`git checkout -b feature/新功能名称`)
-3. **提交代码** (`git commit -m '添加某某功能'`)
-4. **推送分支** (`git push origin feature/新功能名称`)
-5. **发起 Pull Request**
-
-> 💡 **小贴士**：建议将 PR 提交到 GitHub，我们会自动同步到其他代码托管平台
-
-<a href="https://openomy.com/ageerle/ruoyi-ai" target="_blank" style="display: block; width: 100%;" align="center">
-  <img src="https://openomy.com/svg?repo=ageerle/ruoyi-ai&chart=bubble&latestMonth=3" target="_blank" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
-</a>
-
-## 📄 开源协议
-
-本项目采用 **MIT 开源协议**，详情请查看 [LICENSE](LICENSE) 文件。
-
-## 🙏 特别鸣谢
-
-感谢以下优秀的开源项目为本项目提供支持：
-
-- [Spring AI Alibaba Copilot](https://github.com/springaialibaba/spring-ai-alibaba-copilot) - 基于spring-ai-alibaba 的智能编码助手
-- [Spring AI](https://spring.io/projects/spring-ai) - Spring 官方 AI 集成框架
-- [Langchain4j](https://github.com/langchain4j/langchain4j) - 强大的 Java LLM 开发框架
-- [RuoYi-Vue-Plus](https://gitee.com/dromara/RuoYi-Vue-Plus) - 成熟的企业级快速开发框架
-- [Vben Admin](https://github.com/vbenjs/vue-vben-admin) - 现代化的 Vue 后台管理模板
-- [chatgpt-java](https://github.com/Grt1228/chatgpt-java) - 优秀的 ChatGPT Java SDK
-
-## 🌐 生态伙伴
-
-- [PPIO 派欧云](https://ppinfra.com/user/register?invited_by=P8QTUY&utm_source=github_ruoyi-ai) - 提供高性价比的 GPU 算力和模型 API 服务
-- [优云智算](https://www.compshare.cn/?ytag=GPU_YY-gh_ruoyi) - 万卡RTX40系GPU+海内外主流模型API服务，秒级响应，按量计费，新客免费用。
-- [胜算云](https://www.shengsuanyun.com/?from=CH_3WG71ZOS) - AI模型算力聚合超市云服务。
-
-## 💬 社区交流
-
-<div align="center">
-
-<table>
-<tr>
-<td align="center">
-<img src="image/wx.png" alt="微信二维码" width="200" height="200"><br>
-<strong>扫码添加作者微信</strong><br>
-<em>邀请进群学习</em>
-</td>
-<td align="center">
-<img src="image/qq.png" alt="QQ群二维码" width="200" height="200"><br>
-<strong>QQ技术交流群</strong><br>
-<em>技术讨论</em>
-</td>
-</tr>
-</table>
-
-</div>
-
----
-
-<div align="center">
-
-**[⭐ 点个Star支持一下](https://github.com/ageerle/ruoyi-ai)** • **[🍴 Fork 开始贡献](https://github.com/ageerle/ruoyi-ai/fork)** • **[📚 English](README_EN.md)** • **[📖 查看完整文档](https://doc.pandarobot.chat)**
-
-*用 ❤️ 打造，由 RuoYi AI 开源社区维护*
-
-</div>
-
-<!-- Badge Links -->
-[contributors-shield]: https://img.shields.io/github/contributors/ageerle/ruoyi-ai.svg?style=flat-square
-[contributors-url]: https://github.com/ageerle/ruoyi-ai/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/ageerle/ruoyi-ai.svg?style=flat-square
-[forks-url]: https://github.com/ageerle/ruoyi-ai/network/members
-[stars-shield]: https://img.shields.io/github/stars/ageerle/ruoyi-ai.svg?style=flat-square
-[stars-url]: https://github.com/ageerle/ruoyi-ai/stargazers
-[issues-shield]: https://img.shields.io/github/issues/ageerle/ruoyi-ai.svg?style=flat-square
-[issues-url]: https://github.com/ageerle/ruoyi-ai/issues
-[license-shield]: https://img.shields.io/github/license/ageerle/ruoyi-ai.svg?style=flat-square
-[license-url]: https://github.com/ageerle/ruoyi-ai/blob/main/LICENSE
+这个项目将AI技术与人文教育相结合，不仅是一个技术产品，更是一个能够为用户提供知识学习、情感陪伴和娱乐体验的综合性平台。

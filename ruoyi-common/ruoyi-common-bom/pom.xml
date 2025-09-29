@@ -158,6 +158,12 @@
                 <artifactId>ruoyi-common-chat</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <!--数字人模块-->
+            <dependency>
+                <groupId>org.ruoyi</groupId>
+                <artifactId>ruoyi-common-digital</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <!-- 微信模块 -->
             <dependency>

@@ -34,6 +34,10 @@ public class PlusWebInvokeTimeInterceptor implements HandlerInterceptor {
         String url = request.getMethod() + " " + request.getRequestURI();
         String domainName =  request.getServerName();
         log.info("域名信息：{}",domainName);
+        log.info("method={}, uri={}, dispatcherType={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getDispatcherType());
         // 打印请求参数
         if (isJsonRequest(request)) {
             String jsonParam = "";

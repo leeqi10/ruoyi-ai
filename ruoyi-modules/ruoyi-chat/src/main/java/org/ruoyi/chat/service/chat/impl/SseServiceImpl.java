@@ -25,6 +25,8 @@ import org.ruoyi.common.core.utils.StringUtils;
 import org.ruoyi.common.core.utils.file.FileUtils;
 import org.ruoyi.common.core.utils.file.MimeTypeUtils;
 import org.ruoyi.common.satoken.utils.LoginHelper;
+import org.ruoyi.digital.human.domain.vo.DigitalHumanSessionVo;
+import org.ruoyi.digital.human.service.IDigitalHumanSessionService;
 import org.ruoyi.domain.bo.ChatSessionBo;
 import org.ruoyi.domain.bo.QueryVectorBo;
 import org.ruoyi.domain.vo.ChatModelVo;
@@ -51,6 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author ageer
@@ -79,6 +82,8 @@ public class SseServiceImpl implements ISseService {
     // 提示词模板服务
     private final IPromptTemplateService promptTemplateService;
 
+    private final IDigitalHumanSessionService digitalHumanSessionService;
+
 
     @Override
     public SseEmitter sseChat(ChatRequest chatRequest, HttpServletRequest request) {
@@ -96,29 +101,12 @@ public class SseServiceImpl implements ISseService {
             chatRequest.setRole(Message.Role.USER.getName());
 
             if (LoginHelper.isLogin()) {
-
                 // 设置用户id
-                chatRequest.setUserId(LoginHelper.getUserId());
-
-
-                //待优化的地方 （这里请前端提交send的时候传递uuid进来或者sessionId）
-                //待优化的地方 （这里请前端提交send的时候传递uuid进来或者sessionId）
-                //待优化的地方 （这里请前端提交send的时候传递uuid进来或者sessionId）
-                {
-                    // 设置会话id
-                    if (chatRequest.getUuid() == null) {
-                        //暂时随机生成会话id
-                        chatRequest.setSessionId(System.currentTimeMillis());
-                    } else {
-                        //这里或许需要修改一下，这里应该用uuid 或者 前端传递 sessionId
-                        chatRequest.setSessionId(chatRequest.getUuid());
-                    }
-                }
-
-
-
                 chatRequest.setUserId(chatCostService.getUserId());
-                if (chatRequest.getSessionId() == null) {
+                // 获取会话信息
+                Long sessionId = chatRequest.getSessionId();
+                DigitalHumanSessionVo digitalHumanSessionVo = digitalHumanSessionService.queryById(sessionId);
+                if (digitalHumanSessionVo == null) {
                     ChatSessionBo chatSessionBo = new ChatSessionBo();
                     chatSessionBo.setUserId(chatCostService.getUserId());
                     chatSessionBo.setSessionTitle(getFirst10Characters(chatRequest.getPrompt()));
@@ -126,12 +114,12 @@ public class SseServiceImpl implements ISseService {
                     chatSessionService.insertByBo(chatSessionBo);
                     chatRequest.setSessionId(chatSessionBo.getId());
                 }
-                
+
                 // 保存用户消息
                 chatCostService.saveMessage(chatRequest);
             }
             // 自动选择模型并获取对应的聊天服务
-            IChatService chatService = autoSelectModelAndGetService(chatRequest);
+//            IChatService chatService = autoSelectModelAndGetService(chatRequest);
 
             // 用户消息只保存不计费，AI回复由BillingChatServiceProxy自动处理计费
             // chatCostService.publishBillingEvent(chatRequest); // 用户输入不计费
@@ -157,8 +145,8 @@ public class SseServiceImpl implements ISseService {
                         }
                 );
             } else {
-                // 不重试不降级，直接调用
-                chatService.chat(chatRequest, sseEmitter);
+//                // 不重试不降级，直接调用
+//                chatService.chat(chatRequest, sseEmitter);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -175,7 +163,7 @@ public class SseServiceImpl implements ISseService {
             if (Boolean.TRUE.equals(chatRequest.getHasAttachment())) {
                 chatModelVo = selectModelByCategory("image");
             } else if (Boolean.TRUE.equals(chatRequest.getAutoSelectModel())) {
-                chatModelVo = selectModelByCategory("chat");
+                chatModelVo = selectModelByCategory("deepseek");
             } else {
                 chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
             }
@@ -245,19 +233,14 @@ public class SseServiceImpl implements ISseService {
                 .build();
         messages.add(0, sysMessage);
 
-        chatRequest.setSysPrompt(sysPrompt);
-
         // 用户对话内容
         String chatString = null;
         // 获取用户对话信息
-        Object content = messages.get(messages.size() - 1).getContent();
-        if (content instanceof List<?> listContent) {
-            if (CollectionUtil.isNotEmpty(listContent)) {
-                chatString = listContent.get(0).toString();
-            }
-        } else {
-            chatString = content.toString();
-        }
+        // 将所有消息合并为一个字符串，里面是字符串模式，包含角色和内容
+        chatString = messages.stream()
+                .map(message -> message.getRole() + ": " + message.getContent())
+                .collect(Collectors.joining("\n"));
+        log.info("用户对话信息: {}", chatString);
         chatRequest.setPrompt(chatString);
     }
 
@@ -265,40 +248,75 @@ public class SseServiceImpl implements ISseService {
      * 处理知识库相关逻辑
      */
     private String processKnowledgeBase(ChatRequest chatRequest, List<Message> messages) {
-        if (StringUtils.isEmpty(chatRequest.getKid())) {
+        if (StringUtils.isEmpty(chatRequest.getKid()) && chatRequest.getKids() == null) {
             return getPromptTemplatePrompt(promptTemplateEnum.VECTOR.getDesc());
         }
+        if (chatRequest.getKids() != null) {
+            List<Long> kids = chatRequest.getKids();
+            for (Long kid : kids) {
+                try {
+                    // 查询知识库信息
+                    KnowledgeInfoVo knowledgeInfoVo = knowledgeInfoService.queryById(Long.valueOf(kid));
+                    if (knowledgeInfoVo == null) {
+                        log.warn("知识库信息不存在，kid: {}", kid);
+                        continue;
+                    }
 
-        try {
-            // 查询知识库信息
-            KnowledgeInfoVo knowledgeInfoVo = knowledgeInfoService.queryById(Long.valueOf(chatRequest.getKid()));
-            if (knowledgeInfoVo == null) {
-                log.warn("知识库信息不存在，kid: {}", chatRequest.getKid());
-                return getPromptTemplatePrompt(promptTemplateEnum.VECTOR.getDesc());
+                    // 查询向量模型配置信息
+                    ChatModelVo chatModel = chatModelService.selectModelByName(knowledgeInfoVo.getEmbeddingModelName());
+                    if (chatModel == null) {
+                        log.warn("向量模型配置不存在，模型名称: {}", knowledgeInfoVo.getEmbeddingModelName());
+                        continue;
+                    }
+
+                    // 构建向量查询参数
+                    QueryVectorBo queryVectorBo = buildQueryVectorBo(chatRequest, knowledgeInfoVo, chatModel);
+
+                    // 获取向量查询结果
+                    List<String> nearestList = vectorStoreService.getQueryVector(queryVectorBo);
+
+                    // 添加知识库消息到上下文
+                    addKnowledgeMessages(messages, nearestList);
+
+
+                } catch (Exception e) {
+                    log.error("处理知识库信息失败: {}", e.getMessage(), e);
+                }
             }
-
-            // 查询向量模型配置信息
-            ChatModelVo chatModel = chatModelService.selectModelByName(knowledgeInfoVo.getEmbeddingModelName());
-            if (chatModel == null) {
-                log.warn("向量模型配置不存在，模型名称: {}", knowledgeInfoVo.getEmbeddingModelName());
-                return getPromptTemplatePrompt(promptTemplateEnum.VECTOR.getDesc());
-            }
-
-            // 构建向量查询参数
-            QueryVectorBo queryVectorBo = buildQueryVectorBo(chatRequest, knowledgeInfoVo, chatModel);
-
-            // 获取向量查询结果
-            List<String> nearestList = vectorStoreService.getQueryVector(queryVectorBo);
-
-            // 添加知识库消息到上下文
-            addKnowledgeMessages(messages, nearestList);
-
             // 返回知识库系统提示词
-            return getKnowledgeSystemPrompt(knowledgeInfoVo);
+            return chatRequest.getSysPrompt();
+        } else {
+            try {
+                // 查询知识库信息
+                KnowledgeInfoVo knowledgeInfoVo = knowledgeInfoService.queryById(Long.valueOf(chatRequest.getKid()));
+                if (knowledgeInfoVo == null) {
+                    log.warn("知识库信息不存在，kid: {}", chatRequest.getKid());
+                    return getPromptTemplatePrompt(promptTemplateEnum.VECTOR.getDesc());
+                }
 
-        } catch (Exception e) {
-            log.error("处理知识库信息失败: {}", e.getMessage(), e);
-            return getPromptTemplatePrompt(promptTemplateEnum.VECTOR.getDesc());
+                // 查询向量模型配置信息
+                ChatModelVo chatModel = chatModelService.selectModelByName(knowledgeInfoVo.getEmbeddingModelName());
+                if (chatModel == null) {
+                    log.warn("向量模型配置不存在，模型名称: {}", knowledgeInfoVo.getEmbeddingModelName());
+                    return getPromptTemplatePrompt(promptTemplateEnum.VECTOR.getDesc());
+                }
+
+                // 构建向量查询参数
+                QueryVectorBo queryVectorBo = buildQueryVectorBo(chatRequest, knowledgeInfoVo, chatModel);
+
+                // 获取向量查询结果
+                List<String> nearestList = vectorStoreService.getQueryVector(queryVectorBo);
+
+                // 添加知识库消息到上下文
+                addKnowledgeMessages(messages, nearestList);
+
+                // 返回知识库系统提示词
+                return getKnowledgeSystemPrompt(knowledgeInfoVo);
+
+            } catch (Exception e) {
+                log.error("处理知识库信息失败: {}", e.getMessage(), e);
+                return getPromptTemplatePrompt(promptTemplateEnum.VECTOR.getDesc());
+            }
         }
     }
 
@@ -369,7 +387,7 @@ public class SseServiceImpl implements ISseService {
     private String getDefaultSystemPrompt() {
         String sysPrompt = chatModelVo != null ? chatModelVo.getSystemPrompt() : null;
         if (StringUtils.isEmpty(sysPrompt)) {
-            sysPrompt = "你是一个由RuoYI-AI开发的人工智能助手，名字叫RuoYI人工智能助手。"
+            sysPrompt = "你是一个由leeqi开发的人工智能助手，名字叫leeqi人工智能助手。"
                     + "你擅长中英文对话，能够理解并处理各种问题，提供安全、有帮助、准确的回答。"
                     + "当前时间：" + DateUtils.getDate()
                     + "#注意：回复之前注意结合上下文和工具返回内容进行回复。";

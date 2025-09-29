@@ -115,6 +115,7 @@ public class PromptTemplateServiceImpl implements IPromptTemplateService {
         LambdaQueryWrapper<PromptTemplate> queryWrapper = Wrappers.lambdaQuery(PromptTemplate.class);
         queryWrapper.eq(PromptTemplate::getCategory, category);
         queryWrapper.orderByDesc(PromptTemplate::getUpdateTime);
-        return baseMapper.selectVoOne(queryWrapper, false);
+        queryWrapper.last("limit 1");
+        return baseMapper.selectVoOne(queryWrapper);
     }
 }

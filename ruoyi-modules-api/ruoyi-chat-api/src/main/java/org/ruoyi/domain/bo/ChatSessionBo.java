@@ -50,4 +50,6 @@ public class ChatSessionBo extends BaseEntity {
      */
     private String conversationId;
 
+    private Long digitalId;
+
 }

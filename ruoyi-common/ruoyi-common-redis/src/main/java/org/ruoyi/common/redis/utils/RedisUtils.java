@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 @SuppressWarnings(value = {"unchecked", "rawtypes"})
 public class RedisUtils {
 
-    private static final RedissonClient CLIENT = SpringUtils.getBean(RedissonClient.class);
+    public static final RedissonClient CLIENT = SpringUtils.getBean(RedissonClient.class);
 
     /**
      * 限流

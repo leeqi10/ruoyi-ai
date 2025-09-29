@@ -1,11 +1,11 @@
 package org.ruoyi.chat.domain.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 
 @Data
-@Schema(name = "变化任务提交参数")
+@ApiModel("变化任务提交参数")
 public class SubmitActionDTO {
 
 	private String customId;

@@ -1,0 +1,70 @@
+# 科大讯飞实时语音转写API配置示例
+xfyun:
+  # 是否启用科大讯飞服务
+  enabled: true
+  
+  # 应用ID（必填）
+  app-id: 8d728de4
+  
+  # API密钥（必填）
+  api-key: f27cf7acdefe7e909f1256acc4ac5a05
+  
+  # API密钥（必填，用于语音识别鉴权）
+  api-secret: NDRiYzAyNWVkYzU2NDBmYjYyOWQ0MWZh
+  
+  # WebSocket连接URL
+  ws-url: wss://tts-api.xfyun.cn/v2/tts
+  
+  # 连接配置
+  connect-timeout: 30000
+  read-timeout: 60000
+  retry-count: 3
+  retry-interval: 1000
+  
+  # 连接池配置
+  max-connections: 10
+  keep-alive-duration: 300000
+  
+  # 音频配置
+  audio:
+    # 音频格式：raw, speex, opus, speex-wb, opus-wb
+    format: raw
+    # 采样率：16000, 8000
+    sample-rate: 16000
+    # 数据编码：raw, speex, opus
+    data-type: raw
+    # 声道数
+    channels: 1
+    # 位深度
+    bit-depth: 16
+    # 音频分片大小（字节）
+    chunk-size: 1280
+    # 分片发送间隔（毫秒）
+    chunk-interval: 40
+  
+  # 语言配置
+  language:
+    # 默认语言：zh_cn, en_us
+    default-language: zh_cn
+    # 默认领域：iat, medical, finance, education, car, smart_home
+    default-domain: iat
+    # 是否开启标点符号：1-开启, 0-关闭
+    punctuation: "1"
+    # 数字转换：zh-中文, en-英文, 0-关闭
+    number-convert: zh
+    # 是否开启热词
+    enable-hotword: false
+    # 热词ID列表（多个用逗号分隔）
+    hotword-ids: ""
+  
+  # 日志配置
+  log:
+    # 是否启用调试日志
+    debug: false
+    # 是否启用WebSocket通信日志
+    websocket: false
+    # 是否启用音频处理日志
+    audio: false
+    # 是否启用性能监控日志
+    performance: false
+

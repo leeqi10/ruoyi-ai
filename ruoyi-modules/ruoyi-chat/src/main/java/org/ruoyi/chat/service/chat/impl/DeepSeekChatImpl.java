@@ -11,6 +11,8 @@ import org.ruoyi.chat.enums.ChatModeType;
 import org.ruoyi.chat.service.chat.IChatService;
 import org.ruoyi.chat.support.ChatServiceHelper;
 import org.ruoyi.common.chat.request.ChatRequest;
+import org.ruoyi.common.core.utils.StringUtils;
+import org.ruoyi.common.digital.service.XfyunTextToSpeechService;
 import org.ruoyi.domain.vo.ChatModelVo;
 import org.ruoyi.service.IChatModelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,12 @@ public class DeepSeekChatImpl  implements IChatService {
 
     @Autowired
     private IChatModelService chatModelService;
+    @Autowired
+    private XfyunTextToSpeechService textToSpeechService;
 
     @Override
     public SseEmitter chat(ChatRequest chatRequest, SseEmitter emitter) {
-        ChatModelVo chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
+        ChatModelVo chatModelVo = chatModelService.selectModelByName("deepseek-reasoner");
         StreamingChatModel chatModel = OpenAiStreamingChatModel.builder()
                 .baseUrl(chatModelVo.getApiHost())
                 .apiKey(chatModelVo.getApiKey())
@@ -45,7 +49,6 @@ public class DeepSeekChatImpl  implements IChatService {
                 public void onPartialResponse(String partialResponse) {
                     emitter.send(partialResponse);
                     log.info("收到消息片段: {}", partialResponse);
-                    System.out.print(partialResponse);
                 }
 
                 @Override
@@ -73,5 +76,24 @@ public class DeepSeekChatImpl  implements IChatService {
     @Override
     public String getCategory() {
         return ChatModeType.DEEPSEEK.getCode();
+    }
+
+    /**
+     * 文字转语音
+     */
+    private String convertTextToSpeech(String text) {
+        if (StringUtils.isBlank(text)) {
+            return null;
+        }
+
+        try {
+            log.info("开始文字转语音，文本长度: {}", text.length());
+            String audioUrl = textToSpeechService.convertTextToSpeech(text);
+            log.info("文字转语音成功，音频URL: {}", audioUrl);
+            return audioUrl;
+        } catch (Exception e) {
+            log.error("文字转语音失败，文本: {}", text, e);
+            throw e;
+        }
     }
 }
