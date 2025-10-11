@@ -82,9 +82,6 @@ public class SseServiceImpl implements ISseService {
     // 提示词模板服务
     private final IPromptTemplateService promptTemplateService;
 
-    private final IDigitalHumanSessionService digitalHumanSessionService;
-
-
     @Override
     public SseEmitter sseChat(ChatRequest chatRequest, HttpServletRequest request) {
         SseEmitter sseEmitter = new SseEmitter(0L);
@@ -101,12 +98,29 @@ public class SseServiceImpl implements ISseService {
             chatRequest.setRole(Message.Role.USER.getName());
 
             if (LoginHelper.isLogin()) {
+
                 // 设置用户id
+                chatRequest.setUserId(LoginHelper.getUserId());
+
+
+                //待优化的地方 （这里请前端提交send的时候传递uuid进来或者sessionId）
+                //待优化的地方 （这里请前端提交send的时候传递uuid进来或者sessionId）
+                //待优化的地方 （这里请前端提交send的时候传递uuid进来或者sessionId）
+                {
+                    // 设置会话id
+                    if (chatRequest.getUuid() == null) {
+                        //暂时随机生成会话id
+                        chatRequest.setSessionId(System.currentTimeMillis());
+                    } else {
+                        //这里或许需要修改一下，这里应该用uuid 或者 前端传递 sessionId
+                        chatRequest.setSessionId(chatRequest.getUuid());
+                    }
+                }
+
+
+
                 chatRequest.setUserId(chatCostService.getUserId());
-                // 获取会话信息
-                Long sessionId = chatRequest.getSessionId();
-                DigitalHumanSessionVo digitalHumanSessionVo = digitalHumanSessionService.queryById(sessionId);
-                if (digitalHumanSessionVo == null) {
+                if (chatRequest.getSessionId() == null) {
                     ChatSessionBo chatSessionBo = new ChatSessionBo();
                     chatSessionBo.setUserId(chatCostService.getUserId());
                     chatSessionBo.setSessionTitle(getFirst10Characters(chatRequest.getPrompt()));
@@ -119,7 +133,7 @@ public class SseServiceImpl implements ISseService {
                 chatCostService.saveMessage(chatRequest);
             }
             // 自动选择模型并获取对应的聊天服务
-//            IChatService chatService = autoSelectModelAndGetService(chatRequest);
+            IChatService chatService = autoSelectModelAndGetService(chatRequest);
 
             // 用户消息只保存不计费，AI回复由BillingChatServiceProxy自动处理计费
             // chatCostService.publishBillingEvent(chatRequest); // 用户输入不计费
@@ -145,8 +159,8 @@ public class SseServiceImpl implements ISseService {
                         }
                 );
             } else {
-//                // 不重试不降级，直接调用
-//                chatService.chat(chatRequest, sseEmitter);
+                // 不重试不降级，直接调用
+                chatService.chat(chatRequest, sseEmitter);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

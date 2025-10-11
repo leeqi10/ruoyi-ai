@@ -32,7 +32,7 @@ public class DeepSeekChatImpl  implements IChatService {
 
     @Override
     public SseEmitter chat(ChatRequest chatRequest, SseEmitter emitter) {
-        ChatModelVo chatModelVo = chatModelService.selectModelByName("deepseek-reasoner");
+        ChatModelVo chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
         StreamingChatModel chatModel = OpenAiStreamingChatModel.builder()
                 .baseUrl(chatModelVo.getApiHost())
                 .apiKey(chatModelVo.getApiKey())
